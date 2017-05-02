@@ -26,7 +26,7 @@ class mplot:
         out = np.array([x, a * np.sin(x + phi), a * np.cos(x + phi)]).T
         return pd.DataFrame(out, columns=['x', 'sin', 'cos'])
     
-        fig = mplot(generate, np.linspace(0, 10, 100), a=(1, 2), phi=(0, 2 * np.pi))
+    fig = mplot(generate, np.linspace(0, 10, 100), a=(1, 2), phi=(0, 2 * np.pi))
     
     # usage 1
     # sub1 = fig.add_subplot(121)
@@ -135,13 +135,14 @@ if __name__ == '__main__':
 
     fig = mplot(generate, np.linspace(0, 10, 100), a=(1, 2), phi=(0, 2 * np.pi))
     # usage 1
-    # sub1 = fig.add_subplot(121)
-    # fig.add_line(sub1, 'x', 'sin', 'r', linewidth=2, label='sin')
-    # fig.add_line(sub1, 'x', 'cos', 'k-.', lw=4, label='cos')
-    # sub2 = fig.add_subplot(122)
-    # fig.add_line(sub2, 'sin', 'cos')
+    sub1 = fig.add_subplot(121)
+    fig.add_line(sub1, 'x', 'sin', 'r', linewidth=2, label='sin')
+    fig.add_line(sub1, 'x', 'cos', 'k-.', lw=4, label='cos')
+    sub2 = fig.add_subplot(122)
+    fig.add_line(sub2, 'sin', 'cos')
+    fig.show()
 
     # usage 2
-    fig.add_subplot()
-    fig.add_all()
-    fig.show()
+    # fig.add_subplot()
+    # fig.add_all()
+    # fig.show()
