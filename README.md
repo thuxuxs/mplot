@@ -3,6 +3,11 @@
 **mplot** is designed to give you a interactive manipulation 
 of the parameters of the function you want.
 
+> install
+```python
+python setup.py install
+```
+
 Define a function we want to show
 ```python
 def generate(x, a, phi):
