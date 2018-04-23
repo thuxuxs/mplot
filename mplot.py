@@ -11,23 +11,24 @@ import numpy as np
 from matplotlib.widgets import Slider
 import matplotlib.pyplot as plt
 import pandas as pd
-
+import sys
+v=3 if sys.version>'2' else 2
 
 class mplot:
     """
     Xusheng Xu, thuxuxs@gmail.com
-    
+
     totally control the function you want to show by the parameters
-    
+
     usage
     ------
-    
+
     def generate(x, a, phi):
         out = np.array([x, a * np.sin(x + phi), a * np.cos(x + phi)]).T
         return pd.DataFrame(out, columns=['x', 'sin', 'cos'])
-    
+
     fig = mplot(generate, np.linspace(0, 10, 100), a=(1, 2), phi=(0, 2 * np.pi))
-    
+
     # usage 1
     # sub1 = fig.add_subplot(121)
     # fig.add_line(sub1, 'x', 'sin', 'r', linewidth=2, label='sin')
@@ -49,7 +50,10 @@ class mplot:
         self.x = x
         self.kwargs = kwargs
         self.arg_num = len(self.kwargs)
-        self.parameter = {name: (high + low) / 2.0 for name, (low, high) in self.kwargs.iteritems()}
+        if v==2:
+            self.parameter = {name: (high + low) / 2.0 for name, (low, high) in self.kwargs.iteritems()}
+        else:
+            self.parameter = {name: (high + low) / 2.0 for name, (low, high) in self.kwargs.items()}
         self.func_init = self.func(self.x, **self.parameter)
 
         self.fig = plt.figure()
@@ -59,7 +63,7 @@ class mplot:
 
     def add_subplot(self, poi=111):
         """
-        
+
         :param poi: position of the figure
         """
         self.sub.append(self.fig.add_subplot(poi))
@@ -68,7 +72,7 @@ class mplot:
     def add_line(self, sub, x_axis, y_axis, *args, **kwargs):
         """
         add a line to a certain subplot
-        
+
         :param sub: subplot
         :param x_axis: x axis name
         :param y_axis: y axis name
@@ -94,11 +98,18 @@ class mplot:
 
     def show(self):
         self.fig.subplots_adjust(bottom=self.bottom + self.arg_num * self.slider_height)
-        for index, (name, (low, high)) in enumerate(self.kwargs.iteritems()):
-            self.sliders[name] = Slider(plt.axes(
-                [0.1, index * self.slider_height + self.bottom / 2.0, self.slider_width, self.slider_height * 0.8]),
-                name, low, high, valinit=self.parameter[name])
-            self.sliders[name].on_changed(self.update(name))
+        if v==2:
+            for index, (name, (low, high)) in enumerate(self.kwargs.iteritems()):
+                self.sliders[name] = Slider(plt.axes(
+                    [0.1, index * self.slider_height + self.bottom / 2.0, self.slider_width, self.slider_height * 0.8]),
+                    name, low, high, valinit=self.parameter[name])
+                self.sliders[name].on_changed(self.update(name))
+        else:
+            for index, (name, (low, high)) in enumerate(self.kwargs.items()):
+                self.sliders[name] = Slider(plt.axes(
+                    [0.1, index * self.slider_height + self.bottom / 2.0, self.slider_width, self.slider_height * 0.8]),
+                    name, low, high, valinit=self.parameter[name])
+                self.sliders[name].on_changed(self.update(name))
         plt.show()
 
     def update(self, *name):
