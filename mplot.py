@@ -130,6 +130,52 @@ class mplot:
 
         return update_real
 
+    
+def dsolve(f, t, parameters, init, result_handle=lambda x: x):
+    """
+    Xusheng Xu, thuxuxs@gmail.com
+
+    Solve differential equations!
+
+    usage
+    ------
+    def f(t,y,args):
+        omega,kappa=[args[i] for i in ['omega','kappa']]
+        a=y[0]
+        return [np.cos(omega*t)*np.exp(-kappa*t)*omega]
+    t=np.arange(0,100,0.1).reshape((-1,1))
+    parameters={'omega':(0,10),
+                'kappa':(0,0.1)}
+    init=[[['y'],[0]],['t',0]]
+    def result_handle(out):
+        out['y']=out['y']**2
+        return out
+    dsolve(f,t,parameters,init,result_handle)
+    """
+
+    dt = t[1, 0] - t[0, 0]
+    t1 = t[-1, 0]
+    y0 = init[0][1]
+    t0 = init[1][1]
+    col = [init[1][0]]
+    col.extend(init[0][0])
+
+    def generate(t, **parameters):
+        r = ode(f).set_integrator('vode')
+        r.set_initial_value(y0, t0).set_f_params(parameters)
+        out = []
+        while r.successful() and r.t <t1:
+            r.integrate(r.t + dt)
+            out.append(r.y)
+        out = np.concatenate((t[:len(out)], np.array(out)), axis=1)
+        out = pd.DataFrame(out, columns=col)
+        return result_handle(out)
+
+    fig = mplot(generate, t, **parameters)
+    fig.add_subplot()
+    fig.add_all()
+    fig.show()
+
 
 if __name__ == '__main__':
     def generate(x, a, phi):
