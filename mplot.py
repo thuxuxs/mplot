@@ -8,6 +8,7 @@
 ###############################################
 
 import numpy as np
+from scipy.integrate import ode
 from matplotlib.widgets import Slider
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -131,7 +132,7 @@ class mplot:
         return update_real
 
     
-def dsolve(f, t, parameters, init, result_handle=lambda x: x):
+def dsolve(f, t, parameters, init, result_handle=lambda x: x,integrator='zvode'):
     """
     Xusheng Xu, thuxuxs@gmail.com
 
@@ -161,7 +162,7 @@ def dsolve(f, t, parameters, init, result_handle=lambda x: x):
     col.extend(init[0][0])
 
     def generate(t, **parameters):
-        r = ode(f).set_integrator('vode')
+        r = ode(f).set_integrator(integrator)
         r.set_initial_value(y0, t0).set_f_params(parameters)
         out = []
         while r.successful() and r.t <t1:
